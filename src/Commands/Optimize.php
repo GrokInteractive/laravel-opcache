@@ -15,7 +15,7 @@ class Optimize extends Command
      *
      * @var string
      */
-    protected $signature = 'opcache:optimize';
+    protected $name = 'opcache:optimize';
 
     /**
      * The console command description.
@@ -29,7 +29,7 @@ class Optimize extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function fire()
     {
         try {
             $this->line('Optimize started, this can take a while...');

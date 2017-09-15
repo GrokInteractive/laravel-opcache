@@ -15,7 +15,7 @@ class Status extends Command
      *
      * @var string
      */
-    protected $signature = 'opcache:status';
+    protected $name = 'opcache:status';
 
     /**
      * The console command description.
@@ -29,7 +29,7 @@ class Status extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function fire()
     {
         try {
             $response = $this->sendRequest('status');

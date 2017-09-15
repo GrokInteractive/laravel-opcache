@@ -2,14 +2,15 @@
 
 namespace Appstract\Opcache;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Routing\Router;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class OpcacheServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
      */
-    public function boot()
+    public function boot(Router $router)
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -19,29 +20,17 @@ class OpcacheServiceProvider extends ServiceProvider
                 Commands\Optimize::class,
             ]);
         }
+
+        parent::boot($router);
     }
 
-    /**
-     * Register the application services.
-     */
-    public function register()
-    {
-        // config
-        $this->mergeConfigFrom(__DIR__.'/../config/opcache.php', 'opcache');
-
-        if (str_contains($this->app->version(), 'Lumen')) {
-            $router = $this->app;
-        } else {
-            $router = $this->app->router;
-        }
-
-        // bind routes
+	public function map(Router $router) {
         $router->group([
-            'middleware'    => [\Appstract\Opcache\Http\Middleware\Request::class],
-            'prefix'        => 'opcache-api',
+            'middleware' => ['\Appstract\Opcache\Http\Middleware\Request'],
+            'prefix' => 'opcache-api',
             'namespace'     => 'Appstract\Opcache\Http\Controllers',
-        ], function ($router) {
+        ], function($router) {
             require __DIR__.'/Http/routes.php';
         });
-    }
+	}
 }

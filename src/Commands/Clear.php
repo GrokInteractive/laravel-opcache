@@ -15,7 +15,7 @@ class Clear extends Command
      *
      * @var string
      */
-    protected $signature = 'opcache:clear';
+    protected $name = 'opcache:clear';
 
     /**
      * The console command description.
@@ -29,7 +29,7 @@ class Clear extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function fire()
     {
         try {
             $response = $this->sendRequest('clear');

@@ -15,7 +15,7 @@ class Config extends Command
      *
      * @var string
      */
-    protected $signature = 'opcache:config';
+    protected $name = 'opcache:config';
 
     /**
      * The console command description.
@@ -29,7 +29,7 @@ class Config extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function fire()
     {
         try {
             $response = $this->sendRequest('config');
