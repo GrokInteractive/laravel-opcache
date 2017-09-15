@@ -37,7 +37,7 @@ class Optimize extends Command
             $response = $this->sendRequest('optimize');
 
             if ($response->result) {
-                $this->info(sprintf('%s of %s files optimized', $response->result->compiled_count, $response->result->total_files_count));
+                $this->info(sprintf('%s files optimized', $response->result->php_files_compiled));
             } else {
                 $this->error('No OPcache information available');
             }

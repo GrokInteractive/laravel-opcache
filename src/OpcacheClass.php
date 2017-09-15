@@ -74,21 +74,28 @@ class OpcacheClass
             throw new Exception("The function 'opcache_compile_file' is not present on this system");
         }
 
-        $phpFiles = array_filter(File::allFiles(base_path()), function($file) {
-            return File::extension($file) == 'php';
-        });
+        $phpFilesCompiled = 0;
 
-        $compiledCount = array_reduce($phpFiles, function($phpFilesCompiled, $file) {
-            if (@opcache_compile_file($file)) {
-                return $phpFilesCompiled + 1;
+        $phpFilesIterator = $this->phpFiles();
+
+        foreach($this->phpFiles() as $filepath => $dontUse) {
+            if (in_arry($filepath, get_included_files())) {
+                continue;
             }
 
-            return $phpFilesCompiled;
-        }, 0);
+            if (@opcache_compile_file($filepath)) {
+                $phpFilesCompiled = $phpFilesCompiled + 1;
+            }
+        }
 
         return [
-            'php_files_discovered' => count($phpFiles),
-            'php_files_compiled' => $compiledCount,
+            'php_files_compiled' => $phpFilesCompiled,
         ];
+    }
+
+    private function phpFiles() {
+        $directory = new \RecursiveDirectoryIterator(base_path());
+        $iterator = new \RecursiveIteratorIterator($directory);
+        return new \RegexIterator($iterator, '/.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
     }
 }
