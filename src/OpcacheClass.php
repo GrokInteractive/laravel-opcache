@@ -71,41 +71,24 @@ class OpcacheClass
     public function optimize()
     {
         if (! function_exists('opcache_compile_file')) {
-            return false;
+            throw new Exception("The function 'opcache_compile_file' is not present on this system");
         }
 
-        // Get files in these paths
-        $files = File::allFiles([
-            base_path('app'),
-            base_path('bootstrap'),
-            base_path('public'),
-            base_path('resources/lang'),
-            base_path('routes'),
-            base_path('storage/framework/views'),
-            base_path('vendor/appstract'),
-            base_path('vendor/composer'),
-            base_path('vendor/laravel/framework'),
-        ]);
-
-        $files = collect($files);
-
-        // filter on php extension
-        $files = $files->filter(function ($value) {
-            return File::extension($value) == 'php';
+        $phpFiles = array_filter(File::allFiles(base_path()), function($file) {
+            return File::extension($file) == 'php';
         });
 
-        // optimized files
-        $optimized = 0;
-
-        $files->each(function ($file) use (&$optimized) {
+        $compiledCount = array_reduce($phpFiles, function($phpFilesCompiled, $file) {
             if (@opcache_compile_file($file)) {
-                $optimized++;
+                return $phpFilesCompiled + 1;
             }
-        });
+
+            return $phpFilesCompiled;
+        }, 0);
 
         return [
-            'total_files_count' => $files->count(),
-            'compiled_count'    => $optimized,
+            'php_files_discovered' => count($phpFiles),
+            'php_files_compiled' => $compiledCount,
         ];
     }
 }
