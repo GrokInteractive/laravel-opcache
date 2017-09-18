@@ -79,7 +79,7 @@ class OpcacheClass
         $phpFilesIterator = $this->phpFiles();
 
         foreach($this->phpFiles() as $filepath => $dontUse) {
-            if (in_arry($filepath, get_included_files())) {
+            if (in_array($filepath, get_included_files())) {
                 continue;
             }
 
